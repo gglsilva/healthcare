@@ -18,8 +18,9 @@ from pathlib import Path
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
+# ==============================================================================
+# CORE SETTINGS
+# ==============================================================================
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
@@ -42,6 +43,20 @@ INSTALLED_APPS = [
     'debug_toolbar',
 ]
 
+INTERNAL_IPS = [
+    # ...
+    '127.0.0.1',
+    # ...
+]
+
+ROOT_URLCONF = 'config.urls'
+WSGI_APPLICATION = 'config.wsgi.application'
+
+
+# ==============================================================================
+# MIDDLEWARE SETTINGS
+# ==============================================================================
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -53,13 +68,10 @@ MIDDLEWARE = [
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 ]
 
-INTERNAL_IPS = [
-    # ...
-    '127.0.0.1',
-    # ...
-]
 
-ROOT_URLCONF = 'config.urls'
+# ==============================================================================
+# TEMPLATES SETTINGS
+# ==============================================================================
 
 TEMPLATES = [
     {
@@ -77,12 +89,12 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'config.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+# ==============================================================================
+# DATABASES SETTINGS
+# ==============================================================================
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -91,8 +103,9 @@ DATABASES = {
 }
 
 
-# Password validation
-# https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
+# ==============================================================================
+# AUTHENTICATION AND AUTHORIZATION SETTINGS
+# ==============================================================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -110,8 +123,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
-# https://docs.djangoproject.com/en/3.2/topics/i18n/
+# ==============================================================================
+# I18N AND L10N SETTINGS
+# ==============================================================================
 
 LANGUAGE_CODE = 'pt-br'
 
@@ -124,12 +138,16 @@ USE_L10N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/3.2/howto/static-files/
+# ==============================================================================
+# STATIC FILES SETTINGS
+# ==============================================================================
 
 STATIC_URL = '/static/'
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
+
+# ==============================================================================
+# MEDIA FILES SETTINGS
+# ==============================================================================
+
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

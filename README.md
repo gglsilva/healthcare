@@ -21,3 +21,10 @@
 ## Create apps
 - mkdir ./apps/appname
 - python manage.py startapp appname ./apps/appname
+
+# Create virtual environment and install dependencies.
+- Run install.sh
+    > ./install.sh
+- Permission to execute the file
+    > chmod +x instal.sh
+

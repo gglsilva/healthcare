@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # My Apps
     'apps.core',
+    'apps.patient',
     # 3th party apps
     'debug_toolbar',
 ]

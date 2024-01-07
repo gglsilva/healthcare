@@ -1,4 +1,6 @@
 from django.db import models
+from datetime import datetime
+
 import uuid
 # Create your models here.
 class Patient(models.Model):
@@ -37,3 +39,10 @@ class Patient(models.Model):
     
     def __str__(self):
         return self.name
+    
+    def calculate_age(self):
+        if self.birth:
+            data_atual = datetime.now().date()
+            idade = data_atual.year - self.birth.year - ((data_atual.month, data_atual.day) < (self.birth.month, self.birth.day))
+            return idade
+        return None

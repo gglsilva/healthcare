@@ -3,7 +3,9 @@ from .models import Patient
 import json
 from django.shortcuts import get_object_or_404
 from django.forms.models import model_to_dict
-from .schema import PatientSchema
+from .schema import PatientSchema, NotFoundResponse
+from django.http import JsonResponse
+import uuid
 
 api = NinjaAPI()
 
@@ -25,3 +27,38 @@ def create(request, patient: PatientSchema):
     patient = Patient(**new_patient)
     patient.save()
     return patient
+
+@api.put('patient/{id}')
+def update(request, id: int, data: PatientSchema):
+    try:
+        patient = Patient.objects.get(id=id)
+        for attribute, value in data.dict().items():
+            setattr(patient, attribute, value)
+        patient.save()
+        return 200, {"detail": "Paciente atualizado com sucesso"}
+    except Patient.DoesNotExist as e:
+        return 404, {"detail": "Paciente não encontrado"}
+    # try:
+    #     patient = Patient.objects.get(id=id)
+    # except Patient.DoesNotExist:
+    #     return 404, {"detail": "Paciente não encontrado"}
+    
+    # # Atualize os campos do paciente com os dados fornecidos
+    # patient.name = data.name
+    # patient.cpf = data.cpf
+    # patient.birth = data.birth
+    # patient.gender = data.gender
+
+    # # Salve as alterações no paciente
+    # patient.save()
+    
+    # return {"detail": "Paciente atualizado com sucesso"}
+    
+@api.delete("patient/{id}", response={201: None, 404: NotFoundResponse})
+def delete_patient(request, id: int):
+    try:
+        patient = Patient.objects.get(id=id)
+        patient.delete()
+        return JsonResponse({'sucess': True})
+    except Patient.DoesNotExist:
+        return 404, {"detail": "Paciente não encontrado"}

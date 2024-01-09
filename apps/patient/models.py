@@ -1,7 +1,7 @@
 from django.db import models
 from datetime import datetime
-
 import uuid
+
 # Create your models here.
 class Patient(models.Model):
     SEX_CHOICES=(

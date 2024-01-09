@@ -1,4 +1,5 @@
-from ninja import NinjaAPI
+# from ninja import NinjaAPI
+from ninja import Router
 from .models import Patient
 import json
 from django.shortcuts import get_object_or_404
@@ -7,28 +8,29 @@ from .schema import PatientSchema, NotFoundResponse
 from django.http import JsonResponse
 import uuid
 
-api = NinjaAPI()
+# api = NinjaAPI()
+router = Router()
 
-@api.get('patient/')
+@router.get('/', tags=["PATIENT"])
 def list(request):
     patients = Patient.objects.all()
     response = [{'patient_id': patient.patient_id, 'name': patient.name, 'age': patient.calculate_age(),'birth':patient.birth, 'gender': patient.gender}for patient in patients]
     return response
 
-@api.get('patient/{id}')
+@router.get('/{id}', tags=["PATIENT"])
 def list_patient(request, id: int):
     patient = get_object_or_404(Patient, id=id)
     return model_to_dict(patient)
     
     
-@api.post('patient/', response=PatientSchema)
+@router.post('/', response=PatientSchema, tags=["PATIENT"])
 def create(request, patient: PatientSchema):
     new_patient = patient.dict()
     patient = Patient(**new_patient)
     patient.save()
     return patient
 
-@api.put('patient/{id}')
+@router.put('/{id}', tags=["PATIENT"])
 def update(request, id: int, data: PatientSchema):
     try:
         patient = Patient.objects.get(id=id)
@@ -54,11 +56,12 @@ def update(request, id: int, data: PatientSchema):
     
     # return {"detail": "Paciente atualizado com sucesso"}
     
-@api.delete("patient/{id}", response={201: None, 404: NotFoundResponse})
+@router.delete("/{id}", tags=["PATIENT"], response={201: None, 404: NotFoundResponse})
 def delete_patient(request, id: int):
     try:
         patient = Patient.objects.get(id=id)
         patient.delete()
-        return JsonResponse({'sucess': True})
+        return 201, {"detail": "Paciente excluido com sucesso"}
     except Patient.DoesNotExist:
         return 404, {"detail": "Paciente não encontrado"}
+    

@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     # My Apps
     'apps.core',
     'apps.patient',
+    'apps.exam',
+    'apps.scheduling',
     # 3th party apps
     'debug_toolbar',
 ]

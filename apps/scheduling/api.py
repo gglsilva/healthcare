@@ -3,22 +3,30 @@ from datetime import date
 from .models import Scheduling
 from apps.patient.models import Patient
 from apps.exam.models import Exam
-from .schema import SchedulingSchema, NotFoundResponse
-from django.shortcuts import get_object_or_404
+from .serializers import SchedulingSchema, NotFoundResponse, SchedulingSerializer
+from django.shortcuts import get_object_or_404, get_list_or_404
+from typing import List
+
 
 router = Router()
 
 # CRUD
-@router.get('/{id}', tags=["SCHEDULING"])
+@router.get('/', tags=["Scheduling"], response={200: list[SchedulingSchema]})
+def list(request ):
+    scheduling =  Scheduling.objects.all()
+    return scheduling
+
+@router.get('/{id}', tags=["Scheduling"])
 def read(request, id:int):
     try:
         schedule = get_object_or_404(Scheduling, id=id)
+        print(schedule)
         return schedule
     except Exception:
         return 404, {"detail": "Paciente não encontrado"}
    
 
-@router.post('/', tags=["SCHEDULING"])
+@router.post('/', tags=["Scheduling"])
 def create(request, schedule: SchedulingSchema):
     new_schedule = schedule.dict()
     try:
@@ -41,7 +49,7 @@ def create(request, schedule: SchedulingSchema):
         return 400, {"detail": "Falha ao tentar Criar um novo agendamento"}
 
 
-@router.put('/{schedule_id}', tags=["SCHEDULING"])
+@router.put('/{schedule_id}', tags=["Scheduling"])
 def update_schedule(request, schedule_id: int, schedule: SchedulingSchema):
     try:
         # Obtém o agendamento existente pelo ID
@@ -70,7 +78,7 @@ def update_schedule(request, schedule_id: int, schedule: SchedulingSchema):
         return 400, {'detail': 'Falha ao tentar atualizar o agendamento'}
 
 
-@router.delete("/{id}", tags=["SCHEDULING"], response={201: None, 404: NotFoundResponse})
+@router.delete("/{id}", tags=["Scheduling"], response={201: None, 404: NotFoundResponse})
 def delete(request, id: int):
     try:
         schedule = Scheduling.objects.get(id=id)
@@ -80,4 +88,21 @@ def delete(request, id: int):
         return 404, {"detail": "Paciente não encontrado"}
 
 # LISTS
-    
+# # TODO Lista de atendimento com status especificando o dia.
+@router.get("/{scheduled_date}", tags=["Scheduling Lists"])
+def list_schedulings(request, scheduled_date: date):
+    """
+    Retorna a lista de agendamentos filtrados por data.
+    """
+    if scheduled_date is not None:
+        # Filtrar agendamentos por data
+        return Scheduling.objects.filter(scheduled_to=scheduled_date)
+
+# TODO Lista de atendimento aguardando atendimento.
+@router.get("/waiting", tags=["Scheduling Lists"], response={200: List[SchedulingSchema]})
+def list_waiting(request):
+    """
+    Retorna a lista de agendamentos aguardando atendimento.
+    """
+    waiting_schedulings = Scheduling.objects.all()  # AG representa 'Aguardando'
+    return waiting_schedulings
